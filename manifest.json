@@ -1,0 +1,10 @@
+{
+    "name": "Daily Codeforces problem",
+    "version": "1.0",
+    "description": "Gets a new random Codeforces problem for you to solve every day",
+    "action": {
+        "default_title": "Daily Codeforces problem",
+        "default_popup": "popup.html"
+      },
+    "manifest_version": 3
+}
