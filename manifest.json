@@ -3,6 +3,11 @@
     "version": "1.0",
     "description": "Gets a new random Codeforces problem for you to solve every day",
     "action": {
+      "default_icon": {
+        "16": "assets/logo.png",
+        "24": "assets/logo.png",
+        "32": "assets/logo.png"
+      },
         "default_title": "Daily Codeforces problem",
         "default_popup": "popup.html"
       },
