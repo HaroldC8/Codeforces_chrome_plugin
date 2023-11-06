@@ -1,29 +1,35 @@
-<link href="popup.css" rel="stylesheet" type="text/css" />
-<script type="module" src="popup.js"></script>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Document</title>
+  <link href="popup.css" rel="stylesheet" type="text/css" />
+  <script type="module" src="popup.js"></script>
+</head>
 <body>
-  <div class="container">
-    <div>
-      <h1 class="title">Daily codeforces problem.</h1>
-      <p>
-        <a id="problemUrl" target="_blank">Link to problem</a>
-      </p>
-      <div id="problemRating"></div>
-      <!--<div id="problemTags"></div>-->
-      <button id="generateButton">Random problem</button>
-      <select id="generateTags">
-        <option value="test1">Test1</option>
-        <option value="test2">Test2</option>
-        <option value="test3">Test3</option>
-        <option value="test4">Test4</option>
-      </select>
-    </div>
-    
+  <div id="container">
+    <h1 class="title">Daily Codeforces problem</h1>
+
+    <div id="loading"></div>
     <a class="problem" href="" target="_blank">
-      <div class="problemId">1234A1</div>
-      <div class="problemName">Problemaaaaaaaaaaaaaa</div>
+      <div class="problemId">1234A</div>
+      <div class="problemName">Problem</div>
+      <img class="problemRatingImg" src="./assets/lightning.png">
       <div class="problemRating">800</div>
     </a>
+    <div id="problemGeneration">
+      <button id="generateButton">Random problem</button>
+      <select id="generateTags">
+        <option value="tag1">Tag1</option>
+        <option value="tag2">Tag2</option>
+        <option value="tag3">Tag3</option>
+      </select>
+      <div class="sliders_control">
+        <input id="fromSlider" type="range" step="100" value="800" min="800" max="3500"/>
+        <input id="toSlider" type="range" step="100" value="3500" min="800" max="3500"/>
+      </div>
+      <div>Rating range: 800-3500</div>
+    </div>
   </div>
 </body>
+</html>
 

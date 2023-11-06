@@ -36,9 +36,13 @@ const tags = [
     'two pointers'
 ];
 
+const container = document.getElementById('container');
 const generate = document.getElementById('generateButton');
-const url = document.getElementById('problemUrl');
-const rating = document.getElementById('problemRating');
+const problemDiv = document.getElementsByClassName('problem')[0];
+const problemId = document.getElementsByClassName('problemId')[0];
+const problemName = document.getElementsByClassName('problemName')[0];
+const problemRating = document.getElementsByClassName('problemRating')[0];
+const loader = document.getElementById('loading');
 //const problemTags = document.getElementById('problemTags');
 
 const apiUrl = "https://codeforces.com/api/problemset.problems";
@@ -51,27 +55,34 @@ generate.addEventListener('click', () => {
 window.onload = fetchUrl;
 
 function fetchUrl(daily = true) {
+    loader.style.visibility = 'visible';
+    problemDiv.style.visibility = 'hidden';
     fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
+        loader.style.visibility = 'hidden';
         var problems = data.result.problems;
         var problem = problems[Math.floor(Math.random()*problems.length)];
+        problemDiv.style.backgroundColor = "#efefef";
 
         if(daily) {
-
             var seed = hfs.cyrb128(dateToString());
             var rand = hfs.sfc32(seed[0], seed[1], seed[2], seed[3]);
-            
+
             problem = problems[Math.floor(rand()*problems.length)];
+            problemDiv.style.backgroundColor = "#ddf0dd";
         }
-        url.innerHTML = problem.index + ". " + problem.name;
-        url.href = problemsUrl + problem.contestId + "/" + problem.index;
-        rating.innerHTML = "Rating: " + problem.rating;
-        /*let alltags = "";
-        for(let i = 0; i < problem.tags.length; i++) {
-            alltags += problem.tags[i] + ", ";
+        problemDiv.href = problemsUrl + problem.contestId + "/" + problem.index;
+        problemId.innerHTML = problem.contestId + problem.index;
+        problemName.innerHTML = problem.name;
+        if(problem.rating === undefined) {
+            problemRating.innerHTML = '-';
         }
-        problemTags.innerHTML = "Tags: " + alltags.slice(0, alltags.length-2);*/
+        else {
+            problemRating.innerHTML = problem.rating;
+        }
+        problemDiv.style.visibility = 'visible';
+        document.body.style.height = container.style.height;
     })
     .catch(error => {
         console.log("Something went wrong:", error);
