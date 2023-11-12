@@ -36,6 +36,7 @@ const tags = [
     'two pointers'
 ];
 
+const tryCount = 1000;
 const container = document.getElementById('container');
 const generate = document.getElementById('generateButton');
 const problemDiv = document.getElementsByClassName('problem')[0];
@@ -60,10 +61,8 @@ function fetchUrl(daily = true) {
     fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        loader.style.visibility = 'hidden';
         var problems = data.result.problems;
-        var problem = problems[Math.floor(Math.random()*problems.length)];
-        problemDiv.style.backgroundColor = "#efefef";
+        var problem = undefined;
 
         if(daily) {
             var seed = hfs.cyrb128(dateToString());
@@ -72,16 +71,32 @@ function fetchUrl(daily = true) {
             problem = problems[Math.floor(rand()*problems.length)];
             problemDiv.style.backgroundColor = "#ddf0dd";
         }
-        problemDiv.href = problemsUrl + problem.contestId + "/" + problem.index;
-        problemId.innerHTML = problem.contestId + problem.index;
-        problemName.innerHTML = problem.name;
-        if(problem.rating === undefined) {
-            problemRating.innerHTML = '-';
-        }
         else {
-            problemRating.innerHTML = problem.rating;
+            let cur = tryCount;
+            var curProblem = undefined;
+            while(cur > 0) {
+                curProblem = problems[Math.floor(Math.random()*problems.length)];
+                if(curProblem.rating >= slider1 && curProblem.rating <= slider2) {
+                    problem = curProblem;
+                    break;
+                }
+                cur--;
+            }
+            problemDiv.style.backgroundColor = "#efefef";
         }
-        problemDiv.style.visibility = 'visible';
+        loader.style.visibility = 'hidden';
+        if(problem !== undefined) {
+            problemDiv.href = problemsUrl + problem.contestId + "/" + problem.index;
+            problemId.innerHTML = problem.contestId + problem.index;
+            problemName.innerHTML = problem.name;
+            if(problem.rating === undefined) {
+                problemRating.innerHTML = '-';
+            }
+            else {
+                problemRating.innerHTML = problem.rating;
+            }
+            problemDiv.style.visibility = 'visible';
+        }
         document.body.style.height = container.style.height;
     })
     .catch(error => {
@@ -96,3 +111,51 @@ function dateToString() {
     let year = dateObj.getUTCFullYear();
     return (year + "/" + month + "/" + day);
 }
+
+function controlFromSlider(fromSlider, toSlider) {
+  const [from, to] = getParsed(fromSlider, toSlider);
+  if (from > to) {
+    fromSlider.value = to;
+    slider1 = to;
+  } else {
+    slider1 = from;
+  }
+  sliders_values.innerHTML = "Rating range: " + slider1 + "-" + slider2;
+}
+
+function controlToSlider(fromSlider, toSlider) {
+  const [from, to] = getParsed(fromSlider, toSlider);
+  setToggleAccessible(toSlider);
+  if (from <= to) {
+    toSlider.value = to;
+    slider2 = to;
+  } else {
+    toSlider.value = from;
+    slider2 = from;
+  }
+  sliders_values.innerHTML = "Rating range: " + slider1 + "-" + slider2;
+}
+
+function getParsed(currentFrom, currentTo) {
+  const from = parseInt(currentFrom.value, 10);
+  const to = parseInt(currentTo.value, 10);
+  return [from, to];
+}
+
+function setToggleAccessible(currentTarget) {
+  const toSlider = document.querySelector('#toSlider');
+  if (Number(currentTarget.value) <= 0 ) {
+    toSlider.style.zIndex = 2;
+  } else {
+    toSlider.style.zIndex = 0;
+  }
+}
+
+const fromSlider = document.querySelector('#fromSlider');
+const toSlider = document.querySelector('#toSlider');
+const sliders_values = document.querySelector('#sliders_values');
+let slider1 = 800, slider2 = 3500;
+setToggleAccessible(toSlider);
+
+fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider);
+toSlider.oninput = () => controlToSlider(fromSlider, toSlider);
