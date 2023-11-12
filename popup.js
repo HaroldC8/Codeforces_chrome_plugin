@@ -39,6 +39,7 @@ const tags = [
 const tryCount = 1000;
 const container = document.getElementById('container');
 const generate = document.getElementById('generateButton');
+const generateTags = document.getElementById('generateTags');
 const problemDiv = document.getElementsByClassName('problem')[0];
 const problemId = document.getElementsByClassName('problemId')[0];
 const problemName = document.getElementsByClassName('problemName')[0];
@@ -56,6 +57,14 @@ generate.addEventListener('click', () => {
 window.onload = fetchUrl;
 
 function fetchUrl(daily = true) {
+    if(daily) {
+      for (let i = 0; i < tags.length; i++){
+        var opt = document.createElement('option');
+        opt.value = tags[i];
+        opt.innerHTML = tags[i];
+        generateTags.appendChild(opt);
+      }
+    }
     loader.style.visibility = 'visible';
     problemDiv.style.visibility = 'hidden';
     fetch(apiUrl)
@@ -69,7 +78,7 @@ function fetchUrl(daily = true) {
             var rand = hfs.sfc32(seed[0], seed[1], seed[2], seed[3]);
 
             problem = problems[Math.floor(rand()*problems.length)];
-            problemDiv.style.backgroundColor = "#ddf0dd";
+            problemDiv.style.backgroundImage = "url(./assets/timer-bg.png)";
         }
         else {
             let cur = tryCount;
@@ -82,7 +91,7 @@ function fetchUrl(daily = true) {
                 }
                 cur--;
             }
-            problemDiv.style.backgroundColor = "#efefef";
+            problemDiv.style.backgroundImage = "url(./assets/random-bg.png)";
         }
         loader.style.visibility = 'hidden';
         if(problem !== undefined) {

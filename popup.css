@@ -10,11 +10,20 @@ h1 {
 .problem {
     color: black;
     background-color: #efefef;
-    margin: auto;
     border-radius: 6px;
     padding: 5px;
     text-decoration: none;
     font-weight: 700;
+    min-height: 25px;
+    background-position: center;
+    background-image: url(./assets/timer-bg.png);
+    background-size: 9em;
+    background-repeat: repeat;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 10px;
+    visibility: hidden;
 }
 
 #problemGeneration {
@@ -25,12 +34,8 @@ h1 {
     cursor: pointer;
 }
 
-.problem {
-    display: flex;
-    text-align: center;
-    align-items: center;
-    margin-bottom: 10px;
-    visibility: hidden;
+#generateTags {
+    width: 50px;
 }
 
 .problemId, .problemRating {
