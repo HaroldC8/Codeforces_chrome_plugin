@@ -8,7 +8,7 @@
 <body>
   <div id="container">
     <h1>Daily Codeforces problem</h1>
-
+    <div id="error"></div>
     <div id="loading"></div>
     <a class="problem" href="" target="_blank">
       <div class="problemId">1234A</div>
@@ -19,8 +19,9 @@
     <div id="problemGeneration">
       <button id="generateButton">Random problem</button>
       <select id="generateTags">
-        <option value=""></option>
+        <option value="-"></option>
       </select>
+      <div id="selectedTags"></div>
       <div class="sliders_control">
         <input id="fromSlider" type="range" step="100" value="800" min="800" max="3500"/>
         <input id="toSlider" type="range" step="100" value="3500" min="800" max="3500"/>

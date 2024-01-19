@@ -36,16 +36,25 @@ const tags = [
     'two pointers'
 ];
 
-const tryCount = 1000;
+//const tryCount = 1000;
 const container = document.getElementById('container');
 const generate = document.getElementById('generateButton');
 const generateTags = document.getElementById('generateTags');
+const selectedTags = document.getElementById('selectedTags');
 const problemDiv = document.getElementsByClassName('problem')[0];
 const problemId = document.getElementsByClassName('problemId')[0];
 const problemName = document.getElementsByClassName('problemName')[0];
 const problemRating = document.getElementsByClassName('problemRating')[0];
 const loader = document.getElementById('loading');
-//const problemTags = document.getElementById('problemTags');
+const errorMessage = document.getElementById('error');
+let problemTags = [];
+
+for (let i = 0; i < tags.length; i++){
+  var opt = document.createElement('option');
+  opt.value = tags[i];
+  opt.innerHTML = tags[i];
+  generateTags.appendChild(opt);
+}
 
 const apiUrl = "https://codeforces.com/api/problemset.problems";
 const problemsUrl = "https://codeforces.com/problemset/problem/"
@@ -54,47 +63,49 @@ generate.addEventListener('click', () => {
     fetchUrl(false);
 });
 
+generateTags.addEventListener('change', () => {
+  if(problemTags.includes(generateTags.value)) {
+    return;
+  }
+  problemTags.push(generateTags.value);
+  let t_tag = document.createElement('div');
+  t_tag.innerHTML = generateTags.value;
+  selectedTags.appendChild(t_tag);
+});
+
 window.onload = fetchUrl;
 
 function fetchUrl(daily = true) {
-    if(daily) {
-      for (let i = 0; i < tags.length; i++){
-        var opt = document.createElement('option');
-        opt.value = tags[i];
-        opt.innerHTML = tags[i];
-        generateTags.appendChild(opt);
-      }
-    }
     loader.style.visibility = 'visible';
     problemDiv.style.visibility = 'hidden';
+    errorMessage.innerHTML = '';
     fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        var problems = data.result.problems;
+        var allProblems = data.result.problems;
         var problem = undefined;
 
         if(daily) {
             var seed = hfs.cyrb128(dateToString());
             var rand = hfs.sfc32(seed[0], seed[1], seed[2], seed[3]);
 
-            problem = problems[Math.floor(rand()*problems.length)];
+            problem = allProblems[Math.floor(rand()*allProblems.length)];
             problemDiv.style.backgroundImage = "url(./assets/timer-bg.png)";
         }
         else {
-            let cur = tryCount;
-            var curProblem = undefined;
-            while(cur > 0) {
-                curProblem = problems[Math.floor(Math.random()*problems.length)];
-                if(curProblem.rating >= slider1 && curProblem.rating <= slider2) {
-                    problem = curProblem;
-                    break;
-                }
-                cur--;
-            }
+            let goodProblems = [];
+            allProblems.forEach(element => {
+              if(element.rating >= slider1 && element.rating <= slider2 && problemTags.every(item => element.tags.includes(item))) {
+                goodProblems.push(element)
+              }
+            });
+            console.log(goodProblems);
+            problem = goodProblems[Math.floor(Math.random()*goodProblems.length)];
             problemDiv.style.backgroundImage = "url(./assets/random-bg.png)";
         }
-        loader.style.visibility = 'hidden';
+
         if(problem !== undefined) {
+            loader.style.visibility = 'hidden';
             problemDiv.href = problemsUrl + problem.contestId + "/" + problem.index;
             problemId.innerHTML = problem.contestId + problem.index;
             problemName.innerHTML = problem.name;
@@ -106,9 +117,15 @@ function fetchUrl(daily = true) {
             }
             problemDiv.style.visibility = 'visible';
         }
+        else {
+            errorMessage.innerHTML = 'No problems found';
+            loader.style.visibility = 'hidden';
+        }
         document.body.style.height = container.style.height;
     })
     .catch(error => {
+        errorMessage.innerHTML = error;
+        loader.style.visibility = 'hidden';
         console.log("Something went wrong:", error);
     })
 }
